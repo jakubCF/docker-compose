@@ -1,0 +1,45 @@
+version: '2'
+services:
+  homeassistant:
+    container_name: HASS
+    image: "ghcr.io/home-assistant/home-assistant:latest"
+    volumes:
+      - /home/jakub/docker/homeassistant/data:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    network_mode: host
+    ports:
+      - "8123:8123"
+
+  mosquitto:
+    container_name: MQTT
+    image: "eclipse-mosquitto:latest"
+    volumes:
+     - /home/jakub/docker/mosquitto/config:/mosquitto/config
+     - /home/jakub/docker/mosquitto/data:/mosquitto/data
+     - /home/jakub/docker/mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    #network_mode: bridge
+  node-red:
+    container_name: "node-red"
+    image: "nodered/node-red:latest"
+    restart: unless-stopped
+    ports:
+      - "1880:1880"
+    #network_mode: bridge
+    volumes:
+      - /home/jakub/docker/node-red/data:/data
+      - /etc/localtime:/etc/localtime:ro
+  esphome:
+    container_name: "esphome"
+    image: "ghcr.io/esphome/esphome:stable"
+    command: dashboard --username jakub --password RKW3Ud2Z68eQ4taQjo6e /config
+    volumes:
+      - /home/jakub/docker/esphome/config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
