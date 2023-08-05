@@ -1,0 +1,25 @@
+version: "2"
+services:
+  caddy:
+    image: jakubvlcek/caddy-cloudflaredns:latest
+    restart: always
+    container_name: caddy
+    volumes:
+      - /home/jakub/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /home/jakub/docker/caddy/certs:/certs
+      - /home/jakub/docker/caddy/config:/config
+      - /home/jakub/docker/caddy/data:/data
+      - /home/jakub/docker/caddy/sites:/srv
+    network_mode: "host"
+    environment:
+      -  CF_API_TOKEN=jug0rDPMm-Lo97ceO9EO5InAhZKBBzVEB9DykQx7
+
+  cloudflared:
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    volumes:
+      - /home/jakub/docker/cloudflared:/usr/local/etc/cloudflared
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    network_mode: "host"
